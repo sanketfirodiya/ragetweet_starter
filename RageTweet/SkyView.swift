@@ -29,7 +29,7 @@
 import UIKit
 
 class SkyView: UIView {
-  private var rageLevel: RageLevel?
+  private var rageLevel: RageLevel = .happy
 
   func setRageLevel(_ rageLevel: RageLevel) {
     self.rageLevel = rageLevel
