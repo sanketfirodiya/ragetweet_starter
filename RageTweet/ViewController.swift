@@ -33,18 +33,6 @@ class ViewController: UIViewController, UIScrollViewDelegate {
   @IBOutlet weak var skyView: SkyView!
   @IBOutlet weak var containerScrollView: ContainerScrollView!
 
-  private let tweets: [String] = ["The world is my oyster - raw, wriggling, and danglng from my mouth.",
-                                  "Get down with your bad self!",
-                                  "Hmm ... Not good, not bad.  Not happy.  Not sad.",
-                                  "Core breach imminent - stand back before I go thermonuclear",
-                                  "FFFFFFFUUUUUUUUU!!!!1!!!"]
-
-  private let ragePhotos: [UIImage?] = [UIImage.init(named: "happy.png"),
-                                        UIImage.init(named: "content.png"),
-                                        UIImage.init(named: "no-amused.png"),
-                                        UIImage.init(named: "irked.png"),
-                                        UIImage.init(named: "raging.png")]
-
   override func viewDidLoad() {
     super.viewDidLoad()
     let viewWidth = view.frame.size.width
@@ -55,12 +43,13 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     scrollView.delegate = self;
 
     let scrollViewWidth = scrollView.frame.size.width
-    for (index, photo) in ragePhotos.enumerated() {
-      let imageView = UIImageView.init(image: photo)
-      let currentXOffset: CGFloat = (scrollViewWidth/2 - imageView.frame.size.width/2) + CGFloat(index) * scrollViewWidth
+
+    for rageLevel in RageLevel.allCases {
+      let imageView = UIImageView.init(image: rageLevel.image)
+      let currentXOffset: CGFloat = (scrollViewWidth/2 - imageView.frame.size.width/2) + CGFloat(rageLevel.rawValue) * scrollViewWidth
       let button = UIButton(frame: CGRect(x: currentXOffset, y: 0, width: imageView.frame.size.width, height: imageView.frame.size.height))
-      button.tag = index
-      button.setImage(photo, for: .normal)
+      button.tag = rageLevel.rawValue
+      button.setImage(rageLevel.image, for: .normal)
       button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
       scrollView.addSubview(button)
     }
@@ -96,12 +85,9 @@ class ViewController: UIViewController, UIScrollViewDelegate {
   private func showTweetCompose(_ index: Int) {
     let composer = TWTRComposer()
 
-    if tweets.count > index {
-      composer.setText(tweets[index])
-    }
-
-    if ragePhotos.count > index {
-      composer.setImage(ragePhotos[index])
+    if let rageLevel = RageLevel(rawValue: index) {
+      composer.setText(rageLevel.tweet)
+      composer.setImage(rageLevel.image)
     }
 
     composer.show(from: self, completion: nil)
